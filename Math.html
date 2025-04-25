@@ -1074,12 +1074,12 @@
 
       // Questions table - clean and simple
       if (wrongQuestions.length > 0) {
-        doc.text("Questions Summary", 20, 130);
+        doc.text("Questions to Review:", 20, 130);
 
         const tableData = wrongQuestions.map((q, index) => [
           (index + 1).toString(),
           q.question,
-          q.userAnswer.toString() === 'דילג/ה' ? '' : q.userAnswer.toString(),
+          q.userAnswer.toString() === 'דילג/ה' ? 'skipped' : q.userAnswer.toString(),
           q.correctAnswer.toString()
         ]);
 
@@ -1094,7 +1094,8 @@
             fontSize: 11,
             cellPadding: 5,
             lineColor: [220, 220, 220],
-            lineWidth: 0.1
+            lineWidth: 0.1,
+            halign: 'left'
           },
           headStyles: {
             fillColor: [64, 133, 244],
@@ -1104,10 +1105,11 @@
           },
           columnStyles: {
             0: {cellWidth: 15},
-            1: {cellWidth: 'auto'},
+            1: {cellWidth: 'auto', minCellWidth: 60},
             2: {cellWidth: 45},
             3: {cellWidth: 45}
-          }
+          },
+          tableWidth: doc.internal.pageSize.width - 40
         });
       }
 
