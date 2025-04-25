@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>תרגול מתמטיקה ליעל ואביגיל</title>
+  <style>
+    :root {
+      --primary-color: #4a90e2;
+      --secondary-color: #f5f5f5;
+      --text-color: #333;
+      --success-color: #2ecc71;
+      --error-color: #e74c3c;
+    }
+
+    * {
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      text-align: center;
+      padding: 0;
+      direction: rtl;
+      background-color: #ffffff;
+      position: relative;
+      min-height: 100vh;
+      margin: 0;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: var(--bg-opacity, 0.15);
+      z-index: -1;
+      background-image: var(--current-background);
+      background-size: cover;
+      background-position: center;
+      transition: none;
+      filter: grayscale(20%);
+      will-change: transform;
+    }
+
+    .container {
+      max-width: 95%;
+      width: 800px;
+      margin: 10px auto;
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 15px;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+    }
+
+    /* Grade Selection Screen */
+    .grade-selection {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 80vh;
+      padding: 20px;
+    }
+
+    .grade-selection h1 {
+      color: var(--primary-color);
+      font-size: 2.5em;
+      margin-bottom: 40px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .grade-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .grade-button {
+      font-size: 24px;
+      padding: 20px;
+      border: none;
+      border-radius: 15px;
+      background-color: var(--primary-color);
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .grade-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Game Screen */
+    .game-screen {
+      display: none;
+      position: relative;
+    }
+
+    .game-screen.active {
+      display: block;
+    }
+
+    .grade-indicator {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 40px;
+      height: 40px;
+      background-color: var(--primary-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .report-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 40px;
+      height: 40px;
+      background-color: #e74c3c;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      transition: all 0.2s ease;
+      padding: 0;
+      line-height: 1;
+      opacity: 0.8;
+    }
+
+    .report-button:hover {
+      transform: scale(1.1);
+      opacity: 1;
+    }
+
+    .header {
+      margin-bottom: 30px;
+      padding-top: 10px;
+    }
+
+    .title {
+      color: var(--primary-color);
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .exercise {
+      font-size: 24px;
+      margin: 20px 0;
+      padding: 20px;
+      background-color: var(--secondary-color);
+      border-radius: 10px;
+      transition: transform 0.3s ease;
+      direction: ltr;
+      unicode-bidi: bidi-override;
+      text-align: center;
+    }
+
+    .exercise:hover {
+      transform: scale(1.02);
+    }
+
+    input#answer {
+      font-size: 20px;
+      padding: 12px;
+      width: 200px;
+      margin: 20px 0;
+      border: 2px solid var(--primary-color);
+      border-radius: 8px;
+      text-align: center;
+      transition: border-color 0.3s ease;
+    }
+
+    input#answer:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+    }
+
+    button {
+      font-size: 18px;
+      padding: 12px 24px;
+      margin: 8px;
+      border: none;
+      border-radius: 8px;
+      background-color: var(--primary-color);
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .button-group button {
+      font-size: 18px;
+      padding: 12px 24px;
+      margin: 8px;
+      border: none;
+      border-radius: 8px;
+      background-color: var(--primary-color);
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .button-group button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .feedback {
+      font-size: 20px;
+      margin: 15px 0;
+      padding: 10px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .feedback.correct {
+      background-color: rgba(46, 204, 113, 0.2);
+      color: var(--success-color);
+    }
+
+    .feedback.incorrect {
+      background-color: rgba(231, 76, 60, 0.2);
+      color: var(--error-color);
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      margin: 20px 0;
+      padding: 15px;
+      background-color: var(--secondary-color);
+      border-radius: 10px;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+
+    .stat-label {
+      font-size: 16px;
+      color: var(--text-color);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background-color: var(--secondary-color);
+      border-radius: 5px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background-color: var(--primary-color);
+      transition: width 0.3s ease;
+    }
+
+    .achievement {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: var(--success-color);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      animation: slideIn 0.5s ease-out;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    @media (max-width: 600px) {
+      body {
+        height: 100%;
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        background-color: #ffffff;
+      }
+
+      body::before {
+        display: none;
+      }
+
+      .container {
+        margin: 0;
+        padding: 5px;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0;
+        min-height: 100vh;
+        box-sizing: border-box;
+      }
+
+      .title {
+        font-size: 1.2em !important;
+        margin: 8px 0 3px 0;
+        padding: 0;
+        line-height: 1.2;
+      }
+
+      .header {
+        margin-bottom: 8px;
+        padding-top: 5px;
+      }
+
+      .stats {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        margin: 5px 0;
+        padding: 5px;
+        gap: 2px;
+        background-color: transparent;
+      }
+
+      .stat-item {
+        flex: 1;
+        margin: 0;
+        padding: 2px;
+      }
+
+      .stat-value {
+        font-size: 18px;
+        line-height: 1.2;
+      }
+
+      .stat-label {
+        font-size: 12px;
+        line-height: 1.2;
+      }
+
+      .exercise {
+        font-size: 1.3em !important;
+        padding: 8px !important;
+        margin: 5px 0;
+        transform: none !important;
+        background-color: transparent;
+      }
+
+      input#answer {
+        font-size: 1.1em !important;
+        padding: 8px !important;
+        width: 90% !important;
+        margin: 5px auto !important;
+        display: block;
+        -webkit-appearance: none;
+        appearance: none;
+        height: 40px;
+      }
+
+      .button-group {
+        flex-direction: column;
+        gap: 3px;
+        margin: 5px 0;
+      }
+
+      .button-group button {
+        width: 100%;
+        margin: 2px 0;
+        padding: 8px;
+        font-size: 14px;
+        -webkit-appearance: none;
+        appearance: none;
+        height: 36px;
+      }
+
+      .progress-bar {
+        margin: 5px 0;
+        height: 6px;
+      }
+
+      .feedback {
+        font-size: 14px;
+        margin: 5px 0;
+        padding: 6px;
+      }
+
+      .achievement {
+        position: fixed;
+        top: 5px;
+        right: 5px;
+        left: 5px;
+        padding: 8px 15px;
+        font-size: 14px;
+        text-align: center;
+        margin: 0 auto;
+        width: auto;
+        max-width: 90%;
+        transform: translateY(0);
+        animation: slideInMobile 0.5s ease-out;
+      }
+
+      @keyframes slideInMobile {
+        from {
+          transform: translateY(-100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .grade-indicator {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+        top: 5px;
+        left: 5px;
+      }
+
+      .report-button {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+        top: 5px;
+        right: 5px;
+      }
+    }
+
+    /* Add viewport height adjustment for mobile keyboard */
+    @media (max-width: 600px) and (max-height: 500px) {
+      .container {
+        padding: 3px;
+      }
+
+      .title {
+        font-size: 1.1em !important;
+        margin: 2px 0;
+      }
+
+      .stats {
+        margin: 3px 0;
+        padding: 3px;
+      }
+
+      .exercise {
+        margin: 3px 0;
+        padding: 5px !important;
+        font-size: 1.2em !important;
+      }
+
+      .button-group {
+        margin: 3px 0;
+      }
+
+      .button-group button {
+        padding: 6px;
+        height: 32px;
+      }
+
+      input#answer {
+        height: 36px;
+        margin: 3px auto !important;
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Grade Selection Screen -->
+    <div class="grade-selection" id="gradeSelection">
+      <h1>🌟 בחרי כיתה 🌟</h1>
+      <div class="grade-buttons">
+        <button class="grade-button" onclick="selectGrade(1)">כיתה א׳</button>
+        <button class="grade-button" onclick="selectGrade(3)">כיתה ג׳</button>
+      </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div class="game-screen" id="gameScreen">
+      <div class="grade-indicator" id="gradeIndicator"></div>
+      <button class="report-button" onclick="sendEmailReport()" title="שלח דוח">📧</button>
+      <div class="header">
+        <h1 class="title">&#9733; תרגול מתמטיקה מהנה &#9733;</h1>
+      </div>
+
+      <div class="stats">
+        <div class="stat-item">
+          <div class="stat-value" id="score">0</div>
+          <div class="stat-label">ניקוד</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="level">1</div>
+          <div class="stat-label">רמה</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="streak">0</div>
+          <div class="stat-label">רצף נכון</div>
+        </div>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+
+      <div class="exercise" id="problem"></div>
+      <input type="number" id="answer" placeholder="הכנס את התשובה שלך">
+      
+      <div class="button-group">
+        <button onclick="checkAnswer()">בדוק תשובה</button>
+        <button onclick="newProblem()">שאלה חדשה</button>
+        <button onclick="changeDifficulty()">שנה רמה</button>
+      </div>
+
+      <div id="feedback" class="feedback"></div>
+    </div>
+  </div>
+
+  <script>
+    let score = 0;
+    let level = 1;
+    let streak = 0;
+    let currentAnswer = 0;
+    let currentGrade = 1;
+    let isMobile = window.innerWidth <= 600;
+    let wrongQuestions = [];
+    let currentProblem = '';
+
+    // Function to track wrong/skipped questions
+    function trackWrongQuestion(question, userAnswer, correctAnswer) {
+      wrongQuestions.push({
+        question: question,
+        userAnswer: userAnswer,
+        correctAnswer: correctAnswer,
+        timestamp: new Date().toLocaleString()
+      });
+    }
+
+    // Add event listener for Enter key
+    document.getElementById('answer').addEventListener('keypress', function(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        checkAnswer();
+      }
+    });
+
+    // Fix input handling for mobile
+    const answerInput = document.getElementById('answer');
+    if (isMobile) {
+      // Allow selection in the input field
+      answerInput.style.webkitUserSelect = 'text';
+      answerInput.style.userSelect = 'text';
+      
+      // Make sure the input is properly sized and positioned
+      answerInput.style.width = '90%';
+      answerInput.style.maxWidth = '300px';
+      answerInput.style.margin = '15px auto';
+      answerInput.style.display = 'block';
+      
+      // Keep keyboard visible by maintaining focus
+      function keepKeyboardVisible() {
+        answerInput.focus();
+      }
+
+      // Focus input when the game screen is shown
+      document.getElementById('gameScreen').addEventListener('click', keepKeyboardVisible);
+      
+      // Focus input after each problem
+      const originalGenerateProblem = generateProblem;
+      generateProblem = function() {
+        originalGenerateProblem();
+        setTimeout(keepKeyboardVisible, 100);
+      };
+
+      // Focus input after checking answer
+      const originalCheckAnswer = checkAnswer;
+      checkAnswer = function() {
+        originalCheckAnswer();
+        setTimeout(keepKeyboardVisible, 1500);
+      };
+    }
+
+    function selectGrade(grade) {
+      currentGrade = grade;
+      // Hide grade selection and show game screen
+      document.getElementById('gradeSelection').style.display = 'none';
+      document.getElementById('gameScreen').classList.add('active');
+      // Set grade indicator with Hebrew letter
+      document.getElementById('gradeIndicator').textContent = grade === 1 ? 'א' : 'ג';
+      // Reset game state
+      score = 0;
+      level = 1;
+      streak = 0;
+      updateStats();
+      generateProblem();
+    }
+
+    function generateFirstGradeProblem() {
+      let num1, num2, operation;
+      const operations = ['+', '-'];
+      if (level >= 4) operations.push('×'); // Add multiplication by 10 at level 4
+      
+      operation = operations[Math.floor(Math.random() * operations.length)];
+      
+      switch(operation) {
+        case '+':
+          if (level <= 2) {
+            // One-digit addition (no carrying)
+            num1 = Math.floor(Math.random() * 9) + 1;
+            num2 = Math.floor(Math.random() * (9 - num1)) + 1;
+          } else if (level <= 4) {
+            // Two-digit with one-digit addition (no carrying)
+            num1 = Math.floor(Math.random() * 89) + 10;
+            const ones = num1 % 10;
+            num2 = Math.floor(Math.random() * (9 - ones)) + 1;
+          } else if (level <= 6) {
+            // One-digit addition (with carrying)
+            num1 = Math.floor(Math.random() * 9) + 1;
+            num2 = Math.floor(Math.random() * (19 - num1)) + 1;
+          } else if (level <= 8) {
+            // Two-digit with one-digit addition (with carrying)
+            num1 = Math.floor(Math.random() * 89) + 10;
+            num2 = Math.floor(Math.random() * 9) + 1;
+          } else {
+            // Two-digit with two-digit addition (with carrying)
+            num1 = Math.floor(Math.random() * 89) + 10;
+            num2 = Math.floor(Math.random() * 89) + 10;
+          }
+          break;
+          
+        case '-':
+          if (level <= 2) {
+            // One-digit subtraction (positive result)
+            num1 = Math.floor(Math.random() * 9) + 1;
+            num2 = Math.floor(Math.random() * num1); // This ensures num2 is always less than num1
+          } else if (level <= 4) {
+            // Two-digit with one-digit subtraction (no borrowing)
+            num1 = Math.floor(Math.random() * 89) + 10;
+            const ones = num1 % 10;
+            num2 = Math.floor(Math.random() * ones); // This ensures no borrowing needed
+          } else if (level <= 6) {
+            // One-digit subtraction (with borrowing)
+            num1 = Math.floor(Math.random() * 9) + 1;
+            num2 = Math.floor(Math.random() * 9) + 1;
+            if (num1 < num2) [num1, num2] = [num2, num1]; // Swap if needed to ensure positive result
+          } else if (level <= 8) {
+            // Two-digit with one-digit subtraction (with borrowing)
+            num1 = Math.floor(Math.random() * 89) + 10;
+            num2 = Math.floor(Math.random() * 9) + 1;
+            if (num1 < num2) [num1, num2] = [num2, num1]; // Swap if needed to ensure positive result
+          } else {
+            // Two-digit with two-digit subtraction (with borrowing)
+            num1 = Math.floor(Math.random() * 89) + 10;
+            num2 = Math.floor(Math.random() * 89) + 10;
+            if (num1 < num2) [num1, num2] = [num2, num1]; // Swap if needed to ensure positive result
+          }
+          break;
+          
+        case '×':
+          // Multiplication by 10
+          num1 = Math.floor(Math.random() * 9) + 1;
+          num2 = 10;
+          break;
+      }
+
+      currentProblem = `${num1} ${operation} ${num2} =`;
+      currentAnswer = eval(currentProblem.replace('×', '*').replace('=', ''));
+      
+      document.getElementById('problem').textContent = currentProblem;
+      document.getElementById('answer').value = '';
+      document.getElementById('feedback').textContent = '';
+      document.getElementById('feedback').className = 'feedback';
+    }
+
+    function generateThirdGradeProblem() {
+      let num1, num2, operation;
+      const operations = ['+', '-', '×', '÷'];
+      
+      operation = operations[Math.floor(Math.random() * operations.length)];
+      
+      switch(operation) {
+        case '+':
+          if (level <= 2) {
+            // Two-digit addition
+            num1 = Math.floor(Math.random() * 90) + 10;
+            num2 = Math.floor(Math.random() * 90) + 10;
+          } else if (level <= 4) {
+            // Three-digit addition
+            num1 = Math.floor(Math.random() * 900) + 100;
+            num2 = Math.floor(Math.random() * 900) + 100;
+          } else {
+            // Larger numbers
+            num1 = Math.floor(Math.random() * 9000) + 1000;
+            num2 = Math.floor(Math.random() * 9000) + 1000;
+          }
+          break;
+          
+        case '-':
+          if (level <= 2) {
+            // Two-digit subtraction
+            num1 = Math.floor(Math.random() * 90) + 10;
+            num2 = Math.floor(Math.random() * 90) + 10;
+            if (num1 < num2) [num1, num2] = [num2, num1]; // Swap if needed to ensure positive result
+          } else if (level <= 4) {
+            // Three-digit subtraction
+            num1 = Math.floor(Math.random() * 900) + 100;
+            num2 = Math.floor(Math.random() * 900) + 100;
+            if (num1 < num2) [num1, num2] = [num2, num1]; // Swap if needed to ensure positive result
+          } else {
+            // Larger numbers
+            num1 = Math.floor(Math.random() * 9000) + 1000;
+            num2 = Math.floor(Math.random() * 9000) + 1000;
+            if (num1 < num2) [num1, num2] = [num2, num1]; // Swap if needed to ensure positive result
+          }
+          break;
+          
+        case '×':
+          if (level <= 2) {
+            // Single digit multiplication
+            num1 = Math.floor(Math.random() * 9) + 1;
+            num2 = Math.floor(Math.random() * 9) + 1;
+          } else if (level <= 4) {
+            // Two-digit by one-digit
+            num1 = Math.floor(Math.random() * 90) + 10;
+            num2 = Math.floor(Math.random() * 9) + 1;
+          } else if (level <= 6) {
+            // Two-digit by two-digit
+            num1 = Math.floor(Math.random() * 90) + 10;
+            num2 = Math.floor(Math.random() * 90) + 10;
+          } else {
+            // Three-digit by one-digit
+            num1 = Math.floor(Math.random() * 900) + 100;
+            num2 = Math.floor(Math.random() * 9) + 1;
+          }
+          break;
+          
+        case '÷':
+          if (level <= 2) {
+            // Simple division (up to 12)
+            num2 = Math.floor(Math.random() * 12) + 1;
+            num1 = num2 * (Math.floor(Math.random() * 12) + 1);
+          } else if (level <= 4) {
+            // Two-digit division
+            num2 = Math.floor(Math.random() * 12) + 1;
+            num1 = num2 * (Math.floor(Math.random() * 90) + 10);
+          } else {
+            // Three-digit division
+            num2 = Math.floor(Math.random() * 12) + 1;
+            num1 = num2 * (Math.floor(Math.random() * 900) + 100);
+          }
+          break;
+      }
+
+      let problem = `${num1} ${operation} ${num2} =`;
+      currentAnswer = eval(problem.replace('×', '*').replace('÷', '/').replace('=', ''));
+      
+      document.getElementById('problem').textContent = problem;
+      document.getElementById('answer').value = '';
+      document.getElementById('feedback').textContent = '';
+      document.getElementById('feedback').className = 'feedback';
+    }
+
+    function generateProblem() {
+      if (currentGrade === 1) {
+        generateFirstGradeProblem();
+      } else {
+        generateThirdGradeProblem();
+      }
+    }
+
+    function checkAnswer() {
+      const userAnswer = parseInt(document.getElementById('answer').value);
+      const feedback = document.getElementById('feedback');
+      
+      if (isNaN(userAnswer)) {
+        feedback.textContent = 'אנא הכנס מספר';
+        feedback.className = 'feedback incorrect';
+        return;
+      }
+
+      if (userAnswer === currentAnswer) {
+        score += 10;
+        streak++;
+        feedback.textContent = 'כל הכבוד! תשובה נכונה! 🎉';
+        feedback.className = 'feedback correct';
+        
+        if (streak % 5 === 0) {
+          showAchievement(`רצף של ${streak} תשובות נכונות! 🌟`);
+        }
+        
+        if (score % 50 === 0) {
+          level++;
+          showAchievement(`עלית לרמה ${level}! 🎯`);
+        }
+      } else {
+        streak = 0;
+        feedback.textContent = `טעות. התשובה הנכונה היא ${currentAnswer}`;
+        feedback.className = 'feedback incorrect';
+        trackWrongQuestion(currentProblem, userAnswer, currentAnswer);
+      }
+
+      updateStats();
+      setTimeout(generateProblem, 1500);
+    }
+
+    function updateStats() {
+      document.getElementById('score').textContent = score;
+      document.getElementById('level').textContent = level;
+      document.getElementById('streak').textContent = streak;
+      document.getElementById('progressFill').style.width = `${(score % 50) * 2}%`;
+    }
+
+    function newProblem() {
+      trackWrongQuestion(currentProblem, 'skipped', currentAnswer);
+      generateProblem();
+    }
+
+    function changeDifficulty() {
+      level++;
+      showAchievement(`שינית לרמה ${level}`);
+      generateProblem();
+    }
+
+    function showAchievement(message) {
+      const achievement = document.createElement('div');
+      achievement.className = 'achievement';
+      achievement.textContent = message;
+      document.body.appendChild(achievement);
+      
+      // Ensure the achievement is visible when keyboard is shown
+      if (isMobile) {
+        // Force the achievement to stay on top
+        achievement.style.zIndex = '9999';
+        
+        // Add a small delay to ensure proper positioning
+        setTimeout(() => {
+          achievement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+      }
+      
+      setTimeout(() => {
+        achievement.remove();
+      }, 3000);
+    }
+
+    function sendEmailReport() {
+      const subject = `Math Practice Report - Grade ${currentGrade}`;
+      
+      // Create a more concise report format
+      let reportContent = `Grade: ${currentGrade}\nScore: ${score}\nLevel: ${level}\nStreak: ${streak}\n\n`;
+      
+      if (wrongQuestions.length > 0) {
+        reportContent += "Questions:\n";
+        wrongQuestions.forEach((q, index) => {
+          reportContent += `${index + 1}. ${q.question} (${q.userAnswer === 'skipped' ? 'skipped' : `answered: ${q.userAnswer}, correct: ${q.correctAnswer}`})\n`;
+        });
+      }
+
+      // Check if the email content might be too long
+      const maxLength = 2000; // Approximate limit for mailto links
+      if (reportContent.length > maxLength) {
+        // If too long, truncate the questions list
+        const truncatedQuestions = wrongQuestions.slice(0, 10); // Keep only first 10 questions
+        reportContent = `Grade: ${currentGrade}\nScore: ${score}\nLevel: ${level}\nStreak: ${streak}\n\n`;
+        reportContent += `Showing first 10 of ${wrongQuestions.length} questions:\n`;
+        truncatedQuestions.forEach((q, index) => {
+          reportContent += `${index + 1}. ${q.question} (${q.userAnswer === 'skipped' ? 'skipped' : `answered: ${q.userAnswer}, correct: ${q.correctAnswer}`})\n`;
+        });
+        reportContent += `\n... and ${wrongQuestions.length - 10} more questions`;
+      }
+
+      const mailtoLink = `mailto:ItamarVa@gmail.com,kerenhanan@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(reportContent)}`;
+      window.open(mailtoLink, '_blank');
+    }
+
+    // Initialize the game
+    generateProblem();
+  </script>
+</body>
+</html>
+
