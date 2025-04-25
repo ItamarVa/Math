@@ -920,91 +920,11 @@
         const fileName = `${studentName} ${dateStr} ; ${timeStr}.pdf`;
         
         if (isMobile && navigator.share) {
-          // Generate PDF and convert to blob for sharing
+          // Generate PDF using the same function as desktop
           window.jsPDF = window.jspdf.jsPDF;
-          const doc = new jsPDF();
+          const doc = generateReportWithFileName(fileName, true); // Pass true to indicate we want the doc returned
           
-          // Set font
-          doc.setFont("helvetica");
-          
-          // Add blue header background
-          doc.setFillColor(66, 133, 244);
-          doc.rect(0, 0, doc.internal.pageSize.width, 40, 'F');
-          
-          // Add title
-          doc.setFontSize(24);
-          doc.setTextColor(255, 255, 255);
-          doc.text("Math Practice Report", doc.internal.pageSize.width / 2, 25, { align: "center" });
-          
-          // Reset text color
-          doc.setTextColor(0, 0, 0);
-          doc.setFontSize(12);
-
-          // Add grade and date in gray background
-          doc.setFillColor(245, 245, 245);
-          doc.rect(20, 50, doc.internal.pageSize.width - 40, 25, 'F');
-          doc.text(`Grade: ${currentGrade}`, 30, 65);
-          const date = new Date().toLocaleDateString('en-US');
-          doc.text(`Date: ${date}`, doc.internal.pageSize.width - 30, 65, { align: "right" });
-
-          // Add stats in blue border box
-          doc.setDrawColor(66, 133, 244);
-          doc.setLineWidth(1);
-          doc.roundedRect(20, 85, doc.internal.pageSize.width - 40, 45, 3, 3);
-
-          // Calculate additional stats
-          const totalQuestions = wrongQuestions.length + (score / 10); // Each correct answer is 10 points
-          const correctAnswers = score / 10;
-          const accuracy = Math.round((correctAnswers / totalQuestions) * 100) || 0;
-
-          // Add stats
-          doc.text(`Score: ${score}`, 30, 100);
-          doc.text(`Level: ${level}`, doc.internal.pageSize.width / 2, 100, { align: "center" });
-          doc.text(`Streak: ${streak}`, doc.internal.pageSize.width - 30, 100, { align: "right" });
-          
-          doc.text(`Total Questions: ${totalQuestions}`, 30, 115);
-          doc.text(`Correct: ${correctAnswers}`, doc.internal.pageSize.width / 2, 115, { align: "center" });
-          doc.text(`Accuracy: ${accuracy}%`, doc.internal.pageSize.width - 30, 115, { align: "right" });
-
-          // Add questions table
-          if (wrongQuestions.length > 0) {
-            doc.text("Questions to Review:", 20, 85);
-
-            const tableData = wrongQuestions.map((q, index) => [
-              (index + 1).toString(),
-              q.question,
-              q.userAnswer.toString() === 'דילג/ה' ? '' : q.userAnswer.toString(),
-              q.correctAnswer.toString()
-            ]);
-
-            doc.autoTable({
-              startY: 90,
-              margin: { left: 20, right: 20 },
-              head: [['#', 'Question', 'Your Answer', 'Correct Answer']],
-              body: tableData,
-              theme: 'grid',
-              styles: {
-                font: 'helvetica',
-                fontSize: 11,
-                cellPadding: 3
-              },
-              headStyles: {
-                fillColor: [66, 133, 244],
-                textColor: 255,
-                fontSize: 11,
-                halign: 'left'
-              },
-              columnStyles: {
-                0: {cellWidth: 15},
-                1: {cellWidth: 80},
-                2: {cellWidth: 50},
-                3: {cellWidth: 50}
-              },
-              tableWidth: doc.internal.pageSize.width - 40
-            });
-          }
-
-          // Convert PDF to blob
+          // Convert PDF to blob for sharing
           const pdfBlob = doc.output('blob');
           
           // Create file for sharing
@@ -1027,7 +947,7 @@
       }
     }
 
-    function generateReportWithFileName(fileName) {
+    function generateReportWithFileName(fileName, returnDoc = false) {
       window.jsPDF = window.jspdf.jsPDF;
       const doc = new jsPDF();
       doc.setR2L(false);
@@ -1126,7 +1046,7 @@
       doc.setTextColor(150, 150, 150);
       doc.text(`Math Practice App - Generated on ${timestamp}`, doc.internal.pageSize.width / 2, doc.internal.pageSize.height - 10, { align: "center" });
 
-      if (isMobile && navigator.share) {
+      if (returnDoc) {
         return doc;
       } else {
         doc.save(fileName);
