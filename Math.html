@@ -33,23 +33,6 @@
       -webkit-overflow-scrolling: touch;
     }
 
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      opacity: var(--bg-opacity, 0.15);
-      z-index: -1;
-      background-image: var(--current-background);
-      background-size: cover;
-      background-position: center;
-      transition: none;
-      filter: grayscale(20%);
-      will-change: transform;
-    }
-
     .container {
       max-width: 95%;
       width: 800px;
@@ -324,10 +307,6 @@
         background-color: #ffffff;
       }
 
-      body::before {
-        display: none;
-      }
-
       .container {
         margin: 0;
         padding: 5px;
@@ -446,22 +425,6 @@
           opacity: 1;
         }
       }
-
-      .grade-indicator {
-        width: 30px;
-        height: 30px;
-        font-size: 16px;
-        top: 5px;
-        left: 5px;
-      }
-
-      .report-button {
-        width: 30px;
-        height: 30px;
-        font-size: 14px;
-        top: 5px;
-        right: 5px;
-      }
     }
 
     /* Add viewport height adjustment for mobile keyboard */
@@ -529,7 +492,7 @@
       <div class="grade-indicator" id="gradeIndicator"></div>
       <button class="report-button" onclick="sendEmailReport()" title="שלח דוח">📧</button>
       <div class="header">
-        <h1 class="title">&#9733; תרגול מתמטיקה מהנה &#9733;</h1>
+        <h1 class="title">🌟 תרגול מתמטיקה מהנה 🌟</h1>
       </div>
 
       <div class="stats">
@@ -799,10 +762,10 @@
           break;
       }
 
-      let problem = `${num1} ${operation} ${num2} =`;
-      currentAnswer = eval(problem.replace('×', '*').replace('÷', '/').replace('=', ''));
+      currentProblem = `${num1} ${operation} ${num2} =`;
+      currentAnswer = eval(currentProblem.replace('×', '*').replace('÷', '/').replace('=', ''));
       
-      document.getElementById('problem').textContent = problem;
+      document.getElementById('problem').textContent = currentProblem;
       document.getElementById('answer').value = '';
       document.getElementById('feedback').textContent = '';
       document.getElementById('feedback').className = 'feedback';
@@ -917,7 +880,7 @@
         reportContent += `\n... and ${wrongQuestions.length - 10} more questions`;
       }
 
-      const mailtoLink = `mailto:ItamarVa@gmail.com,kerenhanan@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(reportContent)}`;
+      const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(reportContent)}`;
       window.open(mailtoLink, '_blank');
     }
 
@@ -926,4 +889,3 @@
   </script>
 </body>
 </html>
-
