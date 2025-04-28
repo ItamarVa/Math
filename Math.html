@@ -577,13 +577,19 @@
     let isMobile = window.innerWidth <= 600;
     let wrongQuestions = [];
     let currentProblem = '';
+    let lastTrackedProblem = null;
 
     function trackWrongQuestion(question, correctAnswer, userAnswer) {
-        wrongQuestions.push({
+        if (lastTrackedProblem === question) return;
+        lastTrackedProblem = question;
+        const entry = {
             question: question,
             correctAnswer: correctAnswer,
-            userAnswer: userAnswer || 'דילג/ה'
-        });
+            userAnswer: userAnswer || 'דילג/ה',
+            timestamp: Date.now()
+        };
+        console.log('Tracking:', entry);
+        wrongQuestions.push(entry);
     }
 
     // Add event listener for Enter key
@@ -715,6 +721,7 @@
 
       currentProblem = `${num1} ${operation} ${num2} =`;
       currentAnswer = eval(currentProblem.replace('×', '*').replace('=', ''));
+      lastTrackedProblem = null;
       
       document.getElementById('problem').textContent = currentProblem;
       document.getElementById('answer').value = '';
@@ -803,6 +810,8 @@
 
       let problem = `${num1} ${operation} ${num2} =`;
       currentAnswer = eval(problem.replace('×', '*').replace('÷', '/').replace('=', ''));
+      currentProblem = problem;
+      lastTrackedProblem = null;
       
       document.getElementById('problem').textContent = problem;
       document.getElementById('answer').value = '';
@@ -861,13 +870,14 @@
     }
 
     function newProblem() {
-      trackWrongQuestion(currentProblem, 'skipped', currentAnswer);
+      trackWrongQuestion(currentProblem, currentAnswer, 'דילג/ה');
       generateProblem();
     }
 
     function changeDifficulty() {
       level++;
       showAchievement(`שינית לרמה ${level}`);
+      updateStats();
       generateProblem();
     }
 
