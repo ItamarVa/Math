@@ -579,6 +579,19 @@
     let currentProblem = '';
     let lastTrackedProblem = null;
 
+    // Restore state from localStorage if available
+    if (localStorage.getItem('wrongQuestions')) {
+      wrongQuestions = JSON.parse(localStorage.getItem('wrongQuestions'));
+    }
+    if (localStorage.getItem('score')) {
+      score = parseInt(localStorage.getItem('score'));
+    }
+
+    function saveState() {
+      localStorage.setItem('wrongQuestions', JSON.stringify(wrongQuestions));
+      localStorage.setItem('score', score.toString());
+    }
+
     function trackWrongQuestion(question, correctAnswer, userAnswer) {
         if (lastTrackedProblem === question) return;
         lastTrackedProblem = question;
@@ -590,6 +603,7 @@
         };
         console.log('Tracking:', entry);
         wrongQuestions.push(entry);
+        saveState();
     }
 
     // Add event listener for Enter key
@@ -859,6 +873,7 @@
       }
 
       updateStats();
+      saveState();
       setTimeout(generateProblem, 1500);
     }
 
@@ -871,6 +886,9 @@
 
     function newProblem() {
       trackWrongQuestion(currentProblem, currentAnswer, 'דילג/ה');
+      score = Math.max(0, score - 5);
+      updateStats();
+      saveState();
       generateProblem();
     }
 
@@ -1066,6 +1084,12 @@
     function sendEmailReport() {
       shareReport();
     }
+
+    // Update button label for skip
+    document.addEventListener('DOMContentLoaded', function() {
+      const skipBtn = Array.from(document.querySelectorAll('.button-group button')).find(btn => btn.textContent.includes('שאלה חדשה'));
+      if (skipBtn) skipBtn.textContent = 'שאלה חדשה (5-)';
+    });
 
     // Initialize the game
     generateProblem();
