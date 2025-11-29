@@ -201,6 +201,39 @@
       flex-direction: column;
       min-height: 0;
       overflow: hidden;
+      /* Ensure game screen uses available space properly */
+      height: 100%;
+    }
+
+    /* Mobile game screen adjustments */
+    @media (max-width: 600px) {
+      .game-screen {
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        /* Use safe area insets for iPhone notch/home indicator */
+        padding-bottom: env(safe-area-inset-bottom, 0);
+        /* Smooth scrolling */
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* Ensure content area scrolls properly when keyboard is visible */
+      .game-screen > div[style*="flex: 1"] {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* Keep buttons visible at bottom */
+      .button-group {
+        position: sticky;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%);
+        padding-top: 5px;
+        margin-top: auto;
+        z-index: 10;
+      }
     }
 
     .game-screen.active {
@@ -352,6 +385,16 @@
       flex-shrink: 0;
     }
 
+    /* Mobile-specific input container adjustments */
+    @media (max-width: 600px) {
+      .input-container-wrapper {
+        min-height: 140px;
+        height: auto;
+        margin: 5px 0;
+        padding: 5px 0;
+      }
+    }
+
     .fraction-input-container {
       position: absolute;
       top: 0;
@@ -421,6 +464,9 @@
       background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
       color: #1e293b;
       box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+      /* Ensure input is easily tappable on mobile */
+      cursor: text;
+      -webkit-tap-highlight-color: rgba(102, 126, 234, 0.3);
     }
 
     .fraction-whole-input::-webkit-outer-spin-button,
@@ -450,6 +496,9 @@
       min-width: 150px;
       box-shadow: 0 10px 25px rgba(102, 126, 234, 0.25);
       transition: all 0.3s ease;
+      /* Make wrapper clickable to focus numerator */
+      cursor: pointer;
+      -webkit-tap-highlight-color: rgba(102, 126, 234, 0.2);
     }
 
     .fraction-input-wrapper:focus-within {
@@ -469,6 +518,9 @@
       -moz-appearance: textfield;
       appearance: textfield;
       color: #1e293b;
+      /* Ensure inputs are easily tappable on mobile */
+      cursor: text;
+      -webkit-tap-highlight-color: rgba(102, 126, 234, 0.3);
     }
 
     .fraction-input-wrapper input::-webkit-outer-spin-button,
@@ -764,6 +816,140 @@
       }
     }
 
+    /* Tablet Landscape (Horizontal) - Priority fix */
+    @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+      .container {
+        max-width: 95%;
+        width: 95%;
+        margin: 5px auto;
+        padding: 10px;
+        max-height: calc(100vh - 10px);
+      }
+
+      .grade-selection {
+        min-height: auto;
+        padding: 15px;
+      }
+
+      .grade-selection h1 {
+        font-size: 2em;
+        margin-bottom: 20px;
+      }
+
+      .grade-buttons {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+        max-width: 100%;
+      }
+
+      .grade-button {
+        font-size: 18px;
+        padding: 15px 10px;
+      }
+
+      .title {
+        font-size: 1.5em !important;
+        margin: 5px 0;
+      }
+
+      .stats {
+        padding: 8px;
+        margin: 5px 0;
+      }
+
+      .stat-value {
+        font-size: 22px;
+      }
+
+      .stat-label {
+        font-size: 12px;
+      }
+
+      .exercise {
+        font-size: 1.8em !important;
+        padding: 15px !important;
+        margin: 5px 0;
+      }
+
+      .input-container-wrapper {
+        min-height: 120px;
+        height: 120px;
+        margin: 5px 0;
+      }
+
+      input#answer {
+        font-size: 24px !important;
+        width: 300px;
+        padding: 10px;
+      }
+
+      .fraction-input-row {
+        flex-direction: row !important;
+        gap: 15px;
+      }
+
+      .fraction-whole-input {
+        font-size: 28px !important;
+        width: 100px !important;
+        padding: 10px !important;
+      }
+
+      .fraction-input-wrapper {
+        padding: 12px 16px;
+        min-width: 130px;
+      }
+
+      .fraction-input-wrapper input {
+        font-size: 28px !important;
+        width: 90px;
+        padding: 10px;
+      }
+
+      .button-group {
+        flex-direction: row;
+        gap: 10px;
+        margin: 5px 0;
+      }
+
+      .button-group button {
+        flex: 1;
+        padding: 10px 15px;
+        font-size: 16px;
+        height: auto;
+      }
+
+      .feedback {
+        font-size: 16px;
+        padding: 10px;
+        margin: 5px 0;
+      }
+
+      .progress-bar {
+        margin: 5px 0;
+        height: 8px;
+      }
+    }
+
+    /* Tablet Portrait */
+    @media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+      .container {
+        max-width: 90%;
+        width: 90%;
+        margin: 10px auto;
+        padding: 15px;
+      }
+
+      .grade-buttons {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+
+      .grade-button {
+        font-size: 22px;
+        padding: 18px 15px;
+      }
+    }
+
     @media (max-width: 600px) {
       body {
         height: 100%;
@@ -771,6 +957,8 @@
         position: fixed;
         width: 100%;
         background-color: #ffffff;
+        /* Use dynamic viewport height for better keyboard handling */
+        height: 100dvh;
       }
 
       body::before {
@@ -783,8 +971,13 @@
         width: 100%;
         max-width: 100%;
         border-radius: 0;
-        min-height: 100vh;
+        /* Use dynamic viewport height - adjusts when keyboard appears */
+        min-height: 100dvh;
+        max-height: 100dvh;
         box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
       }
 
       .title {
@@ -873,18 +1066,24 @@
 
       .button-group {
         flex-direction: column;
-        gap: 3px;
+        gap: 5px;
         margin: 5px 0;
+        /* Ensure buttons stay visible above keyboard */
+        flex-shrink: 0;
+        padding-bottom: env(safe-area-inset-bottom, 5px);
       }
 
       .button-group button {
         width: 100%;
         margin: 2px 0;
-        padding: 8px;
-        font-size: 14px;
+        padding: 10px;
+        font-size: 15px;
         -webkit-appearance: none;
         appearance: none;
-        height: 36px;
+        min-height: 44px;
+        /* Ensure buttons are tappable */
+        cursor: pointer;
+        -webkit-tap-highlight-color: rgba(102, 126, 234, 0.3);
       }
 
       .progress-bar {
@@ -913,33 +1112,60 @@
       }
 
       .fraction-input-container {
-        margin: 12px 0;
+        margin: 8px 0;
       }
 
+      /* Keep fraction inputs horizontal on mobile - whole number to the side */
       .fraction-input-row {
-        flex-direction: column;
-        gap: 10px;
+        flex-direction: row !important;
+        gap: 8px;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: nowrap;
+        width: 100%;
+        max-width: 100%;
       }
 
       .fraction-whole-input {
-        font-size: 24px !important;
+        font-size: 22px !important;
         font-weight: 600 !important;
-        width: 90px !important;
-        padding: 12px !important;
+        width: 70px !important;
+        padding: 10px !important;
         border-width: 3px !important;
+        flex-shrink: 0;
+        /* Make it more tappable */
+        min-height: 44px;
+        cursor: pointer;
+        -webkit-tap-highlight-color: rgba(102, 126, 234, 0.3);
       }
 
       .fraction-input-wrapper {
-        padding: 10px 14px;
-        min-width: 120px;
+        padding: 8px 12px;
+        min-width: 100px;
         border-width: 3px !important;
+        flex-shrink: 0;
+        /* Make it more tappable */
+        cursor: pointer;
+        -webkit-tap-highlight-color: rgba(102, 126, 234, 0.3);
+        /* Ensure wrapper is clickable */
+        pointer-events: auto;
+      }
+
+      /* Make sure inputs inside wrapper are also clickable */
+      .fraction-input-wrapper input {
+        pointer-events: auto;
+        cursor: text;
       }
 
       .fraction-input-wrapper input {
-        font-size: 24px !important;
+        font-size: 22px !important;
         font-weight: 600 !important;
-        width: 80px;
+        width: 70px;
         padding: 8px;
+        /* Make inputs more tappable */
+        min-height: 40px;
+        cursor: pointer;
+        -webkit-tap-highlight-color: rgba(102, 126, 234, 0.3);
       }
 
       .fraction-input-hint {
@@ -1013,10 +1239,12 @@
       }
     }
 
-    /* Add viewport height adjustment for mobile keyboard */
+    /* Add viewport height adjustment for mobile keyboard - when keyboard is visible */
     @media (max-width: 600px) and (max-height: 500px) {
       .container {
         padding: 3px;
+        /* Use smaller viewport when keyboard is visible */
+        max-height: 100svh;
       }
 
       .title {
@@ -1027,21 +1255,51 @@
       .stats {
         margin: 3px 0;
         padding: 3px;
+        flex-wrap: wrap;
+      }
+
+      .stat-item {
+        flex: 1 1 45%;
+        min-width: 45%;
+      }
+
+      .stat-value {
+        font-size: 18px;
+      }
+
+      .stat-label {
+        font-size: 11px;
       }
 
       .exercise {
         margin: 3px 0;
-        padding: 5px !important;
-        font-size: 1.2em !important;
+        padding: 8px !important;
+        font-size: 1.3em !important;
+        line-height: 1.3;
+      }
+
+      .input-container-wrapper {
+        min-height: 100px;
+        height: 100px;
+        margin: 3px 0;
       }
 
       .button-group {
         margin: 3px 0;
+        gap: 3px;
       }
 
       .button-group button {
+        padding: 8px;
+        min-height: 40px;
+        font-size: 14px;
+      }
+
+      .feedback {
+        margin: 3px 0;
         padding: 6px;
-        height: 32px;
+        font-size: 14px;
+        min-height: auto;
       }
 
       .try-again-btn,
@@ -1058,8 +1316,36 @@
       }
 
       input#answer {
-        height: 36px;
+        height: 40px;
         margin: 3px auto !important;
+        font-size: 1.2em !important;
+        padding: 8px !important;
+      }
+
+      .fraction-input-row {
+        gap: 6px;
+      }
+
+      .fraction-whole-input {
+        font-size: 20px !important;
+        width: 60px !important;
+        padding: 8px !important;
+      }
+
+      .fraction-input-wrapper {
+        padding: 6px 10px;
+        min-width: 90px;
+      }
+
+      .fraction-input-wrapper input {
+        font-size: 20px !important;
+        width: 60px;
+        padding: 6px;
+      }
+
+      .fraction-input-hint {
+        font-size: 11px;
+        margin-top: 4px;
       }
     }
 
@@ -1182,7 +1468,7 @@
         <div class="progress-fill" id="progressFill"></div>
       </div>
 
-      <div style="flex: 1; display: flex; flex-direction: column; min-height: 0; overflow-y: auto;">
+      <div style="flex: 1; display: flex; flex-direction: column; min-height: 0; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;">
         <div class="exercise" id="problem"></div>
         
         <!-- Input container - fixed height to prevent layout shift -->
@@ -1193,12 +1479,12 @@
           <!-- Fraction input (shown when fraction problem) -->
           <div id="fractionInput" class="fraction-input-container">
             <div class="fraction-input-row">
+              <input type="number" id="fractionWhole" inputmode="numeric" placeholder="שלם" min="0" step="1" class="fraction-whole-input" tabindex="1">
               <div class="fraction-input-wrapper">
-                <input type="number" id="fractionNumerator" inputmode="numeric" placeholder="מונה" min="0" step="1">
+                <input type="number" id="fractionNumerator" inputmode="numeric" placeholder="מונה" min="0" step="1" tabindex="2">
                 <div class="fraction-input-line"></div>
-                <input type="number" id="fractionDenominator" inputmode="numeric" placeholder="מכנה" min="1" step="1">
+                <input type="number" id="fractionDenominator" inputmode="numeric" placeholder="מכנה" min="1" step="1" tabindex="3">
               </div>
-              <input type="number" id="fractionWhole" inputmode="numeric" placeholder="שלם" min="0" step="1" class="fraction-whole-input">
             </div>
             <div class="fraction-input-hint">הכנס מספר שלם, שבר, או מספר מעורב</div>
           </div>
@@ -1313,6 +1599,52 @@
     const fractionWholeInput = document.getElementById('fractionWhole');
     const fractionNumeratorInput = document.getElementById('fractionNumerator');
     const fractionDenominatorInput = document.getElementById('fractionDenominator');
+    const fractionInputWrapper = document.querySelector('.fraction-input-wrapper');
+    
+    // Make fraction inputs clickable/tappable - clicking wrapper focuses numerator
+    if (fractionInputWrapper) {
+      fractionInputWrapper.addEventListener('click', function(e) {
+        // Only focus if clicking the wrapper itself, not the inputs
+        if (e.target === fractionInputWrapper || e.target.classList.contains('fraction-input-line')) {
+          e.preventDefault();
+          fractionNumeratorInput.focus();
+        }
+      });
+      
+      // Also handle touch events for better mobile support
+      fractionInputWrapper.addEventListener('touchend', function(e) {
+        if (e.target === fractionInputWrapper || e.target.classList.contains('fraction-input-line')) {
+          e.preventDefault();
+          fractionNumeratorInput.focus();
+        }
+      }, { passive: false });
+    }
+    
+    // Make whole number input more accessible - ensure it's clickable
+    if (fractionWholeInput) {
+      // Ensure the input itself is always focusable
+      fractionWholeInput.addEventListener('touchstart', function() {
+        this.focus();
+      }, { passive: true });
+      
+      // Also handle click for desktop
+      fractionWholeInput.addEventListener('click', function() {
+        this.focus();
+      });
+    }
+    
+    // Make numerator and denominator inputs easily focusable
+    [fractionNumeratorInput, fractionDenominatorInput].forEach(input => {
+      if (input) {
+        input.addEventListener('click', function() {
+          this.focus();
+        });
+        
+        input.addEventListener('touchstart', function() {
+          this.focus();
+        }, { passive: true });
+      }
+    });
     
     // Add event listeners for Enter key and arrow keys on fraction inputs
     fractionWholeInput.addEventListener('keydown', function(event) {
@@ -1341,6 +1673,26 @@
         fractionNumeratorInput.focus();
       }
     });
+    
+    // Improve mobile input focus - make all fraction inputs easily tappable
+    if (isMobile) {
+      // Add touch handlers to make inputs more responsive
+      [fractionWholeInput, fractionNumeratorInput, fractionDenominatorInput].forEach(input => {
+        if (input) {
+          input.addEventListener('touchstart', function() {
+            this.focus();
+            // Scroll input into view when keyboard appears
+            setTimeout(() => {
+              this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+          }, { passive: true });
+          
+          // Ensure inputs are selectable
+          input.style.webkitUserSelect = 'text';
+          input.style.userSelect = 'text';
+        }
+      });
+    }
     
     if (isMobile) {
       // Allow selection in the input fields
@@ -1674,7 +2026,18 @@
       document.getElementById('fractionWhole').value = '';
       document.getElementById('fractionNumerator').value = '';
       document.getElementById('fractionDenominator').value = '';
-      document.getElementById('fractionWhole').focus();
+      
+      // Focus whole number input, and ensure it's visible on mobile
+      setTimeout(() => {
+        const wholeInput = document.getElementById('fractionWhole');
+        wholeInput.focus();
+        // On mobile, scroll input into view
+        if (isMobile) {
+          setTimeout(() => {
+            wholeInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 100);
+        }
+      }, 50);
       
       document.getElementById('feedbackText').textContent = '';
       document.getElementById('feedback').className = 'feedback';
@@ -2156,7 +2519,18 @@
         document.getElementById('fractionWhole').value = '';
         document.getElementById('fractionNumerator').value = '';
         document.getElementById('fractionDenominator').value = '';
-        document.getElementById('fractionWhole').focus();
+        
+        // Focus whole number input, and ensure it's visible on mobile
+        setTimeout(() => {
+          const wholeInput = document.getElementById('fractionWhole');
+          wholeInput.focus();
+          // On mobile, scroll input into view
+          if (isMobile) {
+            setTimeout(() => {
+              wholeInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+          }
+        }, 50);
       } else {
         // Regular problem
         const num1 = lastProblemParams.num1;
@@ -2282,37 +2656,103 @@
         const now = new Date();
         const dateStr = now.toLocaleDateString('en-GB').split('/').join('-');
         const timeStr = `${String(now.getHours()).padStart(2, '0')}-${String(now.getMinutes()).padStart(2, '0')}`;
-        const fileName = `${studentName} ${dateStr} ; ${timeStr}.pdf`;
+        
+        // Clean file name - remove special characters that might cause issues
+        const cleanStudentName = studentName.replace(/[<>:"/\\|?*;]/g, '_').trim();
+        const fileName = `${cleanStudentName}_${dateStr}_${timeStr}.pdf`;
         
         if (isMobile && navigator.share) {
-          // Generate PDF using the same function as desktop
-          window.jsPDF = window.jspdf.jsPDF;
-          const doc = generateReportWithFileName(fileName, true); // Pass true to indicate we want the doc returned
-          
-          // Convert PDF to blob for sharing
-          const pdfBlob = doc.output('blob');
-          
-          // Create file for sharing
-          const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
-          
           try {
+            // Generate PDF using the same function as desktop
+            window.jsPDF = window.jspdf.jsPDF;
+            const doc = generateReportWithFileName(fileName, true); // Pass true to indicate we want the doc returned
+            
+            // Ensure PDF is fully generated before creating blob
+            // Use 'arraybuffer' first to ensure PDF is complete, then convert to blob
+            const pdfArrayBuffer = doc.output('arraybuffer');
+            const pdfBlob = new Blob([pdfArrayBuffer], { type: 'application/pdf' });
+            
+            // Verify blob is valid
+            if (!pdfBlob || pdfBlob.size === 0) {
+              throw new Error('PDF generation failed - empty blob');
+            }
+            
+            // Create file for sharing with cleaned name
+            const file = new File([pdfBlob], fileName, { 
+              type: 'application/pdf',
+              lastModified: Date.now()
+            });
+            
+            // Share the file
             await navigator.share({
               files: [file],
               title: 'Math Practice Report',
               text: 'Math Practice Report for ' + studentName
             });
+            
+            // Show success message
+            Swal.fire({
+              icon: 'success',
+              title: 'דוח נשלח בהצלחה!',
+              text: 'הדוח נשלח בהצלחה',
+              timer: 2000,
+              showConfirmButton: false
+            });
           } catch (error) {
             console.error('Error sharing:', error);
-            // Fallback to download if sharing fails
-            doc.save(fileName);
+            
+            // If sharing fails, try to download instead
+            try {
+              window.jsPDF = window.jspdf.jsPDF;
+              const doc = generateReportWithFileName(fileName, true);
+              // Use saveAs for better compatibility
+              const pdfBlob = doc.output('blob');
+              const url = URL.createObjectURL(pdfBlob);
+              const link = document.createElement('a');
+              link.href = url;
+              link.download = fileName;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              URL.revokeObjectURL(url);
+              
+              Swal.fire({
+                icon: 'info',
+                title: 'הורדה במקום שליחה',
+                text: 'הדוח הורד למכשיר שלך',
+                timer: 2000,
+                showConfirmButton: false
+              });
+            } catch (downloadError) {
+              console.error('Download also failed:', downloadError);
+              Swal.fire({
+                icon: 'error',
+                title: 'שגיאה',
+                text: 'לא ניתן ליצור את הדוח. אנא נסה שוב.',
+                confirmButtonText: 'אישור'
+              });
+            }
           }
         } else {
+          // Desktop - use direct download
           generateReportWithFileName(fileName);
         }
       }
     }
 
     function generateReportWithFileName(fileName, returnDoc = false) {
+      // Ensure jsPDF is available
+      if (typeof window.jspdf === 'undefined' || !window.jspdf.jsPDF) {
+        console.error('jsPDF library not loaded');
+        Swal.fire({
+          icon: 'error',
+          title: 'שגיאה',
+          text: 'ספריית PDF לא נטענה. אנא רענן את הדף.',
+          confirmButtonText: 'אישור'
+        });
+        return null;
+      }
+      
       window.jsPDF = window.jspdf.jsPDF;
       const doc = new jsPDF();
       doc.setR2L(false);
@@ -2513,10 +2953,39 @@
       doc.setFont('helvetica', 'normal');
       doc.text(`Created by Itamar Valdman`, doc.internal.pageSize.width / 2, footerY + 17, { align: "center" });
 
-      if (returnDoc) {
-        return doc;
-      } else {
-        doc.save(fileName);
+      // Ensure PDF is finalized before returning/saving
+      // This ensures all content is properly rendered
+      try {
+        if (returnDoc) {
+          // Force finalization by accessing internal properties
+          // This ensures the PDF is complete before returning
+          const testOutput = doc.output('arraybuffer');
+          if (!testOutput || testOutput.byteLength === 0) {
+            throw new Error('PDF generation produced empty output');
+          }
+          return doc;
+        } else {
+          doc.save(fileName);
+        }
+      } catch (error) {
+        console.error('Error finalizing PDF:', error);
+        if (returnDoc) {
+          // Return doc anyway, but log the error
+          return doc;
+        } else {
+          // Try to save anyway
+          try {
+            doc.save(fileName);
+          } catch (saveError) {
+            console.error('Error saving PDF:', saveError);
+            Swal.fire({
+              icon: 'error',
+              title: 'שגיאה',
+              text: 'לא ניתן ליצור את הדוח. אנא נסה שוב.',
+              confirmButtonText: 'אישור'
+            });
+          }
+        }
       }
     }
 
