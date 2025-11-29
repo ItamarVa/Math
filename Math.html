@@ -215,6 +215,8 @@
         padding-bottom: env(safe-area-inset-bottom, 0);
         /* Smooth scrolling */
         -webkit-overflow-scrolling: touch;
+        /* Ensure proper height calculation */
+        max-height: 100dvh;
       }
 
       /* Ensure content area scrolls properly when keyboard is visible */
@@ -223,16 +225,38 @@
         min-height: 0;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
+        /* Ensure content fits above keyboard */
+        max-height: calc(100dvh - 200px);
       }
 
-      /* Keep buttons visible at bottom */
+      /* Keep buttons visible at bottom - always above keyboard */
       .button-group {
         position: sticky;
         bottom: 0;
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%);
         padding-top: 5px;
         margin-top: auto;
-        z-index: 10;
+        z-index: 100;
+        /* Add shadow to make it stand out */
+        box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+        /* Ensure it stays above keyboard */
+        margin-bottom: env(keyboard-inset-height, 0);
+      }
+      
+      /* When keyboard is visible, adjust layout */
+      .game-screen.keyboard-visible .button-group {
+        position: fixed;
+        bottom: env(keyboard-inset-height, 0);
+        left: 0;
+        right: 0;
+        width: 100%;
+        padding-left: 5px;
+        padding-right: 5px;
+        box-sizing: border-box;
+      }
+      
+      .game-screen.keyboard-visible > div[style*="flex: 1"] {
+        padding-bottom: 80px; /* Space for buttons */
       }
     }
 
@@ -1124,6 +1148,23 @@
         flex-wrap: nowrap;
         width: 100%;
         max-width: 100%;
+        /* Ensure proper spacing and visibility */
+        padding: 5px;
+      }
+      
+      /* Make fraction inputs more visible on mobile */
+      .fraction-input-wrapper {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%) !important;
+        border: 4px solid !important;
+        border-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 1 !important;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+      }
+      
+      .fraction-whole-input {
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%) !important;
+        border: 4px solid !important;
+        border-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 1 !important;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
       }
 
       .fraction-whole-input {
@@ -1479,12 +1520,12 @@
           <!-- Fraction input (shown when fraction problem) -->
           <div id="fractionInput" class="fraction-input-container">
             <div class="fraction-input-row">
-              <input type="number" id="fractionWhole" inputmode="numeric" placeholder="שלם" min="0" step="1" class="fraction-whole-input" tabindex="1">
               <div class="fraction-input-wrapper">
                 <input type="number" id="fractionNumerator" inputmode="numeric" placeholder="מונה" min="0" step="1" tabindex="2">
                 <div class="fraction-input-line"></div>
                 <input type="number" id="fractionDenominator" inputmode="numeric" placeholder="מכנה" min="1" step="1" tabindex="3">
               </div>
+              <input type="number" id="fractionWhole" inputmode="numeric" placeholder="שלם" min="0" step="1" class="fraction-whole-input" tabindex="1">
             </div>
             <div class="fraction-input-hint">הכנס מספר שלם, שבר, או מספר מעורב</div>
           </div>
@@ -1529,22 +1570,46 @@
     let lastProblemParams = null; // Store parameters to retry the same problem
     let currentQuestionId = null; // Track current question to avoid duplicate tracking on retry
 
-    // Always reset everything on page load - start fresh from level selection
-    // Questions history is also cleared so reports start from zero
-    allQuestions = [];
-    score = 0;
-    majorLevel = 1;
-    subLevel = 1;
-    questionsInCurrentSubLevel = 0;
-    streak = 0;
-    
-    // Clear all localStorage to ensure fresh start
-    localStorage.removeItem('allQuestions');
-    localStorage.removeItem('wrongQuestions');
-    localStorage.removeItem('score');
-    localStorage.removeItem('majorLevel');
-    localStorage.removeItem('subLevel');
-    localStorage.removeItem('questionsInCurrentSubLevel');
+    // Restore state from localStorage if available (unless explicitly reset)
+    function loadState() {
+      const savedAllQuestions = localStorage.getItem('allQuestions');
+      const savedScore = localStorage.getItem('score');
+      const savedMajorLevel = localStorage.getItem('majorLevel');
+      const savedSubLevel = localStorage.getItem('subLevel');
+      const savedQuestionsInCurrentSubLevel = localStorage.getItem('questionsInCurrentSubLevel');
+      const savedStreak = localStorage.getItem('streak');
+      const savedScreenState = localStorage.getItem('currentScreen'); // 'game' or 'selection'
+      
+      if (savedAllQuestions) {
+        try {
+          allQuestions = JSON.parse(savedAllQuestions);
+        } catch (e) {
+          console.error('Error parsing saved questions:', e);
+          allQuestions = [];
+        }
+      }
+      
+      if (savedScore !== null) score = parseInt(savedScore) || 0;
+      if (savedMajorLevel !== null) majorLevel = parseInt(savedMajorLevel) || 1;
+      if (savedSubLevel !== null) subLevel = parseInt(savedSubLevel) || 1;
+      if (savedQuestionsInCurrentSubLevel !== null) questionsInCurrentSubLevel = parseInt(savedQuestionsInCurrentSubLevel) || 0;
+      if (savedStreak !== null) streak = parseInt(savedStreak) || 0;
+      
+      // Restore screen state
+      if (savedScreenState === 'game' && majorLevel > 0) {
+        // Restore game screen
+        document.getElementById('gradeSelection').style.display = 'none';
+        document.getElementById('gameScreen').classList.add('active');
+        document.getElementById('gradeIndicator').textContent = majorLevel;
+        updateStats();
+        generateProblem();
+      } else {
+        // Show level selection
+        document.getElementById('gradeSelection').style.display = 'flex';
+        document.getElementById('gameScreen').classList.remove('active');
+        updateStats();
+      }
+    }
 
     function saveState() {
       localStorage.setItem('allQuestions', JSON.stringify(allQuestions));
@@ -1552,6 +1617,30 @@
       localStorage.setItem('majorLevel', majorLevel.toString());
       localStorage.setItem('subLevel', subLevel.toString());
       localStorage.setItem('questionsInCurrentSubLevel', questionsInCurrentSubLevel.toString());
+      localStorage.setItem('streak', streak.toString());
+      // Save current screen state
+      const currentScreen = document.getElementById('gameScreen').classList.contains('active') ? 'game' : 'selection';
+      localStorage.setItem('currentScreen', currentScreen);
+    }
+    
+    // Save state when page is about to unload (user navigates away)
+    window.addEventListener('beforeunload', function() {
+      saveState();
+    });
+    
+    // Save state when page becomes hidden (user switches apps/tabs)
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        saveState();
+      }
+    });
+    
+    // Load state on page load - wait for DOM to be ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadState);
+    } else {
+      // DOM is already ready
+      loadState();
     }
 
     // Initialize major level buttons
@@ -1750,6 +1839,7 @@
       // Reset streak but keep score
       streak = 0;
       updateStats();
+      saveState();
       generateProblem();
     }
 
@@ -2667,37 +2757,52 @@
             window.jsPDF = window.jspdf.jsPDF;
             const doc = generateReportWithFileName(fileName, true); // Pass true to indicate we want the doc returned
             
-            // Ensure PDF is fully generated before creating blob
-            // Use 'arraybuffer' first to ensure PDF is complete, then convert to blob
-            const pdfArrayBuffer = doc.output('arraybuffer');
-            const pdfBlob = new Blob([pdfArrayBuffer], { type: 'application/pdf' });
+            if (!doc) {
+              throw new Error('PDF generation returned null');
+            }
+            
+            // Generate PDF as data URL first to ensure it's complete
+            const pdfDataUrl = doc.output('dataurlstring');
+            
+            // Convert data URL to blob
+            const response = await fetch(pdfDataUrl);
+            const pdfBlob = await response.blob();
             
             // Verify blob is valid
             if (!pdfBlob || pdfBlob.size === 0) {
               throw new Error('PDF generation failed - empty blob');
             }
             
-            // Create file for sharing with cleaned name
+            // Create file for sharing - ensure proper MIME type
             const file = new File([pdfBlob], fileName, { 
               type: 'application/pdf',
               lastModified: Date.now()
             });
             
-            // Share the file
-            await navigator.share({
-              files: [file],
-              title: 'Math Practice Report',
-              text: 'Math Practice Report for ' + studentName
-            });
+            // Verify file was created correctly
+            if (!file || file.size === 0) {
+              throw new Error('File creation failed');
+            }
             
-            // Show success message
-            Swal.fire({
-              icon: 'success',
-              title: 'דוח נשלח בהצלחה!',
-              text: 'הדוח נשלח בהצלחה',
-              timer: 2000,
-              showConfirmButton: false
-            });
+            // Share the file
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+              await navigator.share({
+                files: [file],
+                title: 'Math Practice Report',
+                text: 'Math Practice Report for ' + studentName
+              });
+              
+              // Show success message
+              Swal.fire({
+                icon: 'success',
+                title: 'דוח נשלח בהצלחה!',
+                text: 'הדוח נשלח בהצלחה',
+                timer: 2000,
+                showConfirmButton: false
+              });
+            } else {
+              throw new Error('File sharing not supported');
+            }
           } catch (error) {
             console.error('Error sharing:', error);
             
@@ -2705,16 +2810,13 @@
             try {
               window.jsPDF = window.jspdf.jsPDF;
               const doc = generateReportWithFileName(fileName, true);
-              // Use saveAs for better compatibility
-              const pdfBlob = doc.output('blob');
-              const url = URL.createObjectURL(pdfBlob);
-              const link = document.createElement('a');
-              link.href = url;
-              link.download = fileName;
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-              URL.revokeObjectURL(url);
+              
+              if (!doc) {
+                throw new Error('PDF generation failed');
+              }
+              
+              // Use direct save method which is more reliable
+              doc.save(fileName);
               
               Swal.fire({
                 icon: 'info',
@@ -3067,10 +3169,52 @@
       initializeMajorLevelButtons();
     }
     
-    // Always start from level selection screen - reset everything on page load
-    document.getElementById('gradeSelection').style.display = 'flex';
-    document.getElementById('gameScreen').classList.remove('active');
-    updateStats();
+    // Detect keyboard visibility on mobile to adjust layout
+    if (isMobile) {
+      let keyboardVisible = false;
+      
+      // Detect keyboard visibility by checking viewport height changes
+      const checkKeyboard = () => {
+        const currentHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+        const screenHeight = window.screen.height;
+        const threshold = screenHeight * 0.75; // If viewport is less than 75% of screen, keyboard is likely visible
+        
+        if (currentHeight < threshold && !keyboardVisible) {
+          keyboardVisible = true;
+          document.getElementById('gameScreen').classList.add('keyboard-visible');
+        } else if (currentHeight >= threshold && keyboardVisible) {
+          keyboardVisible = false;
+          document.getElementById('gameScreen').classList.remove('keyboard-visible');
+        }
+      };
+      
+      // Check on resize and visual viewport changes
+      window.addEventListener('resize', checkKeyboard);
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', checkKeyboard);
+      }
+      
+      // Also check when inputs are focused/blurred
+      const inputs = [answerInput, fractionWholeInput, fractionNumeratorInput, fractionDenominatorInput];
+      inputs.forEach(input => {
+        if (input) {
+          input.addEventListener('focus', () => {
+            setTimeout(checkKeyboard, 300); // Delay to allow keyboard to appear
+          });
+          input.addEventListener('blur', () => {
+            setTimeout(checkKeyboard, 300); // Delay to allow keyboard to disappear
+          });
+        }
+      });
+    }
+    
+    // State is loaded in loadState() function which is called earlier
+    // If no saved state, show level selection
+    if (!localStorage.getItem('currentScreen')) {
+      document.getElementById('gradeSelection').style.display = 'flex';
+      document.getElementById('gameScreen').classList.remove('active');
+      updateStats();
+    }
   </script>
 </body>
 </html>
