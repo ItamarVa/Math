@@ -412,10 +412,11 @@
     /* Mobile-specific input container adjustments */
     @media (max-width: 600px) {
       .input-container-wrapper {
-        min-height: 140px;
-        height: auto;
-        margin: 5px 0;
-        padding: 5px 0;
+        min-height: 50px !important;
+        height: auto !important;
+        margin: 2px 0 !important;
+        padding: 2px 0 !important;
+        flex-shrink: 0;
       }
     }
 
@@ -845,19 +846,34 @@
       .container {
         max-width: 95%;
         width: 95%;
-        margin: 5px auto;
-        padding: 10px;
-        max-height: calc(100vh - 10px);
+        margin: 3px auto;
+        padding: 8px;
+        max-height: calc(100vh - 6px);
+      }
+      
+      .game-screen.active {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden;
+      }
+      
+      .game-screen:not(.active) {
+        display: none !important;
       }
 
       .grade-selection {
         min-height: auto;
         padding: 15px;
+        padding-top: 60px; /* Add top padding to prevent text cutoff */
       }
 
       .grade-selection h1 {
-        font-size: 2em;
+        font-size: 1.8em;
         margin-bottom: 20px;
+        margin-top: 10px;
+        padding-top: 10px;
+        line-height: 1.2;
       }
 
       .grade-buttons {
@@ -890,67 +906,187 @@
       }
 
       .exercise {
-        font-size: 1.8em !important;
-        padding: 15px !important;
-        margin: 5px 0;
+        font-size: 1.6em !important;
+        padding: 10px !important;
+        margin: 3px 0 !important;
+        line-height: 1.3;
       }
 
       .input-container-wrapper {
-        min-height: 120px;
-        height: 120px;
-        margin: 5px 0;
+        min-height: 70px !important;
+        height: auto !important;
+        margin: 2px 0 !important;
+        padding: 2px 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       input#answer {
-        font-size: 24px !important;
-        width: 300px;
-        padding: 10px;
+        font-size: 20px !important;
+        width: 250px;
+        padding: 6px;
+        height: 45px;
+        position: relative !important;
+        top: 0 !important;
+        left: 0 !important;
+        transform: none !important;
+        margin: 0 auto !important;
+      }
+
+      input#answer.hidden {
+        display: none !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+
+      .fraction-input-container {
+        position: relative !important;
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 2px 0;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        margin: 0 !important;
+      }
+
+      .fraction-input-container:not(.active) {
+        display: none !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+
+      .fraction-input-container.active {
+        display: flex !important;
+        opacity: 1 !important;
+        pointer-events: all !important;
       }
 
       .fraction-input-row {
         flex-direction: row !important;
-        gap: 15px;
+        gap: 6px !important;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        flex-wrap: nowrap;
+        margin: 0 !important;
+        padding: 0 !important;
       }
 
       .fraction-whole-input {
-        font-size: 28px !important;
-        width: 100px !important;
-        padding: 10px !important;
+        font-size: 18px !important;
+        width: 60px !important;
+        padding: 4px 6px !important;
+        height: 38px !important;
+        flex-shrink: 0;
+        margin: 0 !important;
       }
 
       .fraction-input-wrapper {
-        padding: 12px 16px;
-        min-width: 130px;
+        padding: 4px 8px !important;
+        min-width: 75px !important;
+        max-width: 75px !important;
+        width: 75px !important;
+        flex-shrink: 0;
+        margin: 0 !important;
       }
 
       .fraction-input-wrapper input {
-        font-size: 28px !important;
-        width: 90px;
-        padding: 10px;
+        font-size: 18px !important;
+        width: 55px !important;
+        padding: 3px !important;
+        min-height: 28px;
+        max-height: 28px;
+      }
+
+      .fraction-input-line {
+        height: 2px !important;
+        margin: 2px 0 !important;
+      }
+
+      .fraction-input-hint {
+        font-size: 11px !important;
+        margin-top: 4px !important;
+        text-align: center;
+        display: none !important; /* Hide hint on tablet to save space */
       }
 
       .button-group {
         flex-direction: row;
-        gap: 10px;
-        margin: 5px 0;
+        gap: 5px !important; /* Reduced gap between buttons */
+        margin: 3px 0 !important;
+        padding: 2px 0;
       }
 
       .button-group button {
         flex: 1;
-        padding: 10px 15px;
-        font-size: 16px;
+        padding: 8px 10px !important; /* Reduced padding */
+        font-size: 15px !important;
         height: auto;
+        margin: 0 !important; /* Remove margins */
+        min-height: 44px;
       }
 
       .feedback {
-        font-size: 16px;
-        padding: 10px;
-        margin: 5px 0;
+        font-size: 15px;
+        padding: 8px;
+        margin: 3px 0;
+        min-height: auto;
       }
 
       .progress-bar {
-        margin: 5px 0;
-        height: 8px;
+        margin: 3px 0;
+        height: 6px;
+      }
+      
+      /* Lock scrolling - ensure exercise and input are always visible */
+      .game-screen > div[style*="flex: 1"] {
+        max-height: calc(100vh - 140px) !important; /* Reduced to fit exercise + compact input + buttons */
+        overflow-y: hidden !important; /* Lock scrolling */
+        overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      /* Make sure exercise and input are both visible - no scrolling */
+      .exercise {
+        flex-shrink: 0;
+        overflow: visible;
+        max-height: 50% !important; /* Limit exercise height to ensure input is visible */
+      }
+      
+      .input-container-wrapper {
+        flex-shrink: 0;
+        overflow: visible;
+        min-height: 70px !important;
+        height: auto !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      /* Hide feedback on tablet to save space */
+      .feedback {
+        display: none !important;
+      }
+      
+      .header {
+        margin-bottom: 3px;
+        padding-top: 2px;
+      }
+      
+      .title {
+        font-size: 1.4em !important;
+        margin: 3px 0 !important;
+      }
+      
+      .stats {
+        padding: 5px !important;
+        margin: 3px 0 !important;
       }
     }
 
@@ -1012,44 +1148,49 @@
       }
 
       .header {
-        margin-bottom: 8px;
-        padding-top: 5px;
+        margin-bottom: 4px;
+        padding-top: 3px;
+      }
+      
+      .title {
+        margin-bottom: 2px !important;
       }
 
       .stats {
         flex-direction: row;
         flex-wrap: nowrap;
-        margin: 5px 0;
-        padding: 5px;
-        gap: 2px;
+        margin: 3px 0 !important;
+        padding: 3px !important;
+        gap: 1px;
         background-color: transparent;
       }
 
       .stat-item {
         flex: 1;
         margin: 0;
-        padding: 2px;
+        padding: 1px;
       }
 
       .stat-value {
-        font-size: 20px;
-        line-height: 1.2;
+        font-size: 16px !important;
+        line-height: 1.1;
         font-weight: bold;
       }
 
       .stat-label {
-        font-size: 14px;
-        line-height: 1.2;
+        font-size: 10px !important;
+        line-height: 1.1;
         font-weight: 500;
       }
 
       .exercise {
-        font-size: 1.5em !important;
+        font-size: 1.3em !important;
         font-weight: bold !important;
-        padding: 12px !important;
-        margin: 8px 0;
+        padding: 8px !important;
+        margin: 4px 0 !important;
         transform: none !important;
         background-color: rgba(245, 245, 245, 0.8);
+        line-height: 1.3;
       }
 
       .fraction {
@@ -1076,50 +1217,79 @@
         border-width: 3px !important;
       }
 
+      .grade-selection {
+        padding-top: 20px !important; /* Reduced top padding */
+        min-height: calc(100vh - 20px);
+      }
+      
+      .grade-selection h1 {
+        font-size: 1.6em !important;
+        margin-top: 5px !important;
+        margin-bottom: 15px !important;
+        padding-top: 5px !important;
+        line-height: 1.2 !important;
+      }
+
       .grade-buttons {
         grid-template-columns: repeat(2, 1fr);
         gap: 10px;
         max-width: 100%;
         padding: 10px;
+        margin-top: 10px;
       }
 
       .grade-button {
-        font-size: 20px;
-        padding: 16px 20px;
+        font-size: 18px;
+        padding: 14px 18px;
+      }
+      
+      .info-button {
+        top: 60px !important; /* Adjust position to account for notch */
       }
 
       .button-group {
         flex-direction: column;
-        gap: 5px;
-        margin: 5px 0;
+        gap: 3px !important;
+        margin: 3px 0 !important;
         /* Ensure buttons stay visible above keyboard */
         flex-shrink: 0;
-        padding-bottom: env(safe-area-inset-bottom, 5px);
+        padding-bottom: env(safe-area-inset-bottom, 3px);
       }
 
       .button-group button {
         width: 100%;
-        margin: 2px 0;
-        padding: 10px;
-        font-size: 15px;
+        margin: 1px 0;
+        padding: 8px !important;
+        font-size: 14px !important;
         -webkit-appearance: none;
         appearance: none;
-        min-height: 44px;
+        min-height: 40px !important;
         /* Ensure buttons are tappable */
         cursor: pointer;
         -webkit-tap-highlight-color: rgba(102, 126, 234, 0.3);
       }
+      
+      .button-group .check-answer-btn {
+        min-height: 42px !important;
+        font-size: 15px !important;
+      }
 
       .progress-bar {
-        margin: 5px 0;
-        height: 6px;
+        margin: 2px 0 !important;
+        height: 4px !important;
       }
 
       .feedback {
-        font-size: 16px;
+        font-size: 14px;
         font-weight: 500;
-        margin: 8px 0;
-        padding: 8px;
+        margin: 4px 0;
+        padding: 6px;
+        min-height: auto;
+      }
+      
+      /* Hide feedback in normal flow - will show as popup for all devices */
+      .feedback.incorrect {
+        display: none !important;
       }
 
       .try-again-btn,
@@ -1136,83 +1306,83 @@
       }
 
       .fraction-input-container {
-        margin: 8px 0;
+        margin: 2px 0 !important;
+        position: relative !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
       }
 
-      /* Keep fraction inputs horizontal on mobile - whole number to the side */
+      /* Keep fraction inputs horizontal on mobile - whole number to the side, make them smaller */
       .fraction-input-row {
         flex-direction: row !important;
-        gap: 8px;
+        gap: 4px !important;
         align-items: center;
         justify-content: center;
         flex-wrap: nowrap;
         width: 100%;
         max-width: 100%;
-        /* Ensure proper spacing and visibility */
-        padding: 5px;
+        padding: 2px;
+        margin: 0 !important;
       }
       
-      /* Make fraction inputs more visible on mobile */
+      /* Make fraction inputs smaller and more compact */
       .fraction-input-wrapper {
         background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%) !important;
-        border: 4px solid !important;
+        border: 2px solid !important;
         border-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 1 !important;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2) !important;
+        padding: 3px 6px !important;
+        min-width: 60px !important;
+        max-width: 60px !important;
+        width: 60px !important;
+        flex-shrink: 0;
+        cursor: pointer;
+        -webkit-tap-highlight-color: rgba(102, 126, 234, 0.3);
+        pointer-events: auto;
+        margin: 0 !important;
       }
       
+      .fraction-input-wrapper input {
+        font-size: 16px !important;
+        font-weight: 600 !important;
+        width: 45px !important;
+        padding: 3px !important;
+        min-height: 28px !important;
+        max-height: 28px !important;
+        cursor: pointer;
+        -webkit-tap-highlight-color: rgba(102, 126, 234, 0.3);
+        pointer-events: auto;
+      }
+      
+      .fraction-input-line {
+        height: 2px !important;
+        margin: 2px 0 !important;
+      }
+
       .fraction-whole-input {
         background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%) !important;
-        border: 4px solid !important;
+        border: 2px solid !important;
         border-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%) 1 !important;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3) !important;
-      }
-
-      .fraction-whole-input {
-        font-size: 22px !important;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2) !important;
+        font-size: 16px !important;
         font-weight: 600 !important;
-        width: 70px !important;
-        padding: 10px !important;
-        border-width: 3px !important;
+        width: 50px !important;
+        padding: 3px 5px !important;
+        border-width: 2px !important;
         flex-shrink: 0;
-        /* Make it more tappable */
-        min-height: 44px;
+        min-height: 28px !important;
+        max-height: 28px !important;
         cursor: pointer;
         -webkit-tap-highlight-color: rgba(102, 126, 234, 0.3);
-      }
-
-      .fraction-input-wrapper {
-        padding: 8px 12px;
-        min-width: 100px;
-        border-width: 3px !important;
-        flex-shrink: 0;
-        /* Make it more tappable */
-        cursor: pointer;
-        -webkit-tap-highlight-color: rgba(102, 126, 234, 0.3);
-        /* Ensure wrapper is clickable */
-        pointer-events: auto;
-      }
-
-      /* Make sure inputs inside wrapper are also clickable */
-      .fraction-input-wrapper input {
-        pointer-events: auto;
-        cursor: text;
-      }
-
-      .fraction-input-wrapper input {
-        font-size: 22px !important;
-        font-weight: 600 !important;
-        width: 70px;
-        padding: 8px;
-        /* Make inputs more tappable */
-        min-height: 40px;
-        cursor: pointer;
-        -webkit-tap-highlight-color: rgba(102, 126, 234, 0.3);
+        margin: 0 !important;
       }
 
       .fraction-input-hint {
-        font-size: 14px;
+        font-size: 11px !important;
         font-weight: 500;
-        margin-top: 8px;
+        margin-top: 2px;
+        line-height: 1.2;
       }
 
       .achievement {
@@ -1472,7 +1642,7 @@
     <!-- Major Level Selection Screen -->
     <div class="grade-selection" id="gradeSelection">
       <button class="info-button" onclick="showInfo()" title="מידע">ℹ️</button>
-      <h1>🌟 בחרי רמה ראשית 🌟</h1>
+      <h1>🌟 בחרו רמה ראשית 🌟</h1>
       <div class="grade-buttons" id="majorLevelButtons">
         <!-- Buttons will be generated dynamically -->
       </div>
@@ -1509,7 +1679,7 @@
         <div class="progress-fill" id="progressFill"></div>
       </div>
 
-      <div style="flex: 1; display: flex; flex-direction: column; min-height: 0; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;">
+      <div style="flex: 1; display: flex; flex-direction: column; min-height: 0; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; max-height: calc(100dvh - 180px);">
         <div class="exercise" id="problem"></div>
         
         <!-- Input container - fixed height to prevent layout shift -->
@@ -2112,7 +2282,9 @@
       
       // Show fraction input, hide regular input
       document.getElementById('answer').classList.add('hidden');
+      document.getElementById('answer').style.display = 'none'; // Ensure hidden
       document.getElementById('fractionInput').classList.add('active');
+      document.getElementById('fractionInput').style.display = 'block'; // Ensure visible after popup
       document.getElementById('fractionWhole').value = '';
       document.getElementById('fractionNumerator').value = '';
       document.getElementById('fractionDenominator').value = '';
@@ -2343,7 +2515,9 @@
       
       // Show regular input, hide fraction input
       document.getElementById('answer').classList.remove('hidden');
+      document.getElementById('answer').style.display = 'block'; // Ensure visible after popup
       document.getElementById('fractionInput').classList.remove('active');
+      document.getElementById('fractionInput').style.display = 'none'; // Ensure hidden
       document.getElementById('answer').value = '';
       document.getElementById('answer').focus();
       
@@ -2370,10 +2544,19 @@
         const hasDenominator = !isNaN(denominator) && denominator > 0;
         
         if (!hasWhole && !hasNumerator && !hasDenominator) {
-          document.getElementById('feedbackText').textContent = 'אנא הכנס תשובה';
-          feedback.className = 'feedback incorrect';
-          document.getElementById('wrongAnswerActions').style.display = 'none';
-          document.getElementById('revealedAnswer').style.display = 'none';
+          if (isMobile) {
+            Swal.fire({
+              title: 'אנא הכנס תשובה',
+              icon: 'warning',
+              confirmButtonText: 'אישור',
+              confirmButtonColor: '#667eea'
+            });
+          } else {
+            document.getElementById('feedbackText').textContent = 'אנא הכנס תשובה';
+            feedback.className = 'feedback incorrect';
+            document.getElementById('wrongAnswerActions').style.display = 'none';
+            document.getElementById('revealedAnswer').style.display = 'none';
+          }
           return;
         }
         
@@ -2382,10 +2565,19 @@
         if (hasNumerator && hasDenominator) {
           // Has fraction part
           if (denominator <= 0) {
-            document.getElementById('feedbackText').textContent = 'המכנה חייב להיות גדול מ-0';
-            feedback.className = 'feedback incorrect';
-            document.getElementById('wrongAnswerActions').style.display = 'none';
-            document.getElementById('revealedAnswer').style.display = 'none';
+            if (isMobile) {
+              Swal.fire({
+                title: 'המכנה חייב להיות גדול מ-0',
+                icon: 'error',
+                confirmButtonText: 'אישור',
+                confirmButtonColor: '#667eea'
+              });
+            } else {
+              document.getElementById('feedbackText').textContent = 'המכנה חייב להיות גדול מ-0';
+              feedback.className = 'feedback incorrect';
+              document.getElementById('wrongAnswerActions').style.display = 'none';
+              document.getElementById('revealedAnswer').style.display = 'none';
+            }
             return;
           }
           // Combine whole number and fraction: whole * denominator + numerator
@@ -2395,10 +2587,19 @@
           // Only whole number provided
           userFraction = simplifyFraction(wholeNumber, 1);
         } else {
-          document.getElementById('feedbackText').textContent = 'אנא הכנס שבר תקין (מונה ומכנה)';
-          feedback.className = 'feedback incorrect';
-          document.getElementById('wrongAnswerActions').style.display = 'none';
-          document.getElementById('revealedAnswer').style.display = 'none';
+          if (isMobile) {
+            Swal.fire({
+              title: 'אנא הכנס שבר תקין (מונה ומכנה)',
+              icon: 'warning',
+              confirmButtonText: 'אישור',
+              confirmButtonColor: '#667eea'
+            });
+          } else {
+            document.getElementById('feedbackText').textContent = 'אנא הכנס שבר תקין (מונה ומכנה)';
+            feedback.className = 'feedback incorrect';
+            document.getElementById('wrongAnswerActions').style.display = 'none';
+            document.getElementById('revealedAnswer').style.display = 'none';
+          }
           return;
         }
         
@@ -2422,18 +2623,36 @@
         // Read from regular input
         const answerInput = document.getElementById('answer').value.trim();
         if (!answerInput) {
-          document.getElementById('feedbackText').textContent = 'אנא הכנס תשובה';
-          feedback.className = 'feedback incorrect';
-          document.getElementById('wrongAnswerActions').style.display = 'none';
-          document.getElementById('revealedAnswer').style.display = 'none';
+          if (isMobile) {
+            Swal.fire({
+              title: 'אנא הכנס תשובה',
+              icon: 'warning',
+              confirmButtonText: 'אישור',
+              confirmButtonColor: '#667eea'
+            });
+          } else {
+            document.getElementById('feedbackText').textContent = 'אנא הכנס תשובה';
+            feedback.className = 'feedback incorrect';
+            document.getElementById('wrongAnswerActions').style.display = 'none';
+            document.getElementById('revealedAnswer').style.display = 'none';
+          }
           return;
         }
         const userAnswer = parseFloat(answerInput);
         if (isNaN(userAnswer)) {
-          document.getElementById('feedbackText').textContent = 'אנא הכנס מספר תקין';
-          feedback.className = 'feedback incorrect';
-          document.getElementById('wrongAnswerActions').style.display = 'none';
-          document.getElementById('revealedAnswer').style.display = 'none';
+          if (isMobile) {
+            Swal.fire({
+              title: 'אנא הכנס מספר תקין',
+              icon: 'warning',
+              confirmButtonText: 'אישור',
+              confirmButtonColor: '#667eea'
+            });
+          } else {
+            document.getElementById('feedbackText').textContent = 'אנא הכנס מספר תקין';
+            feedback.className = 'feedback incorrect';
+            document.getElementById('wrongAnswerActions').style.display = 'none';
+            document.getElementById('revealedAnswer').style.display = 'none';
+          }
           return;
         }
         isCorrect = Math.abs(userAnswer - currentAnswer) < 0.001; // Handle floating point precision
@@ -2500,19 +2719,71 @@
           ? fractionToString(currentAnswer) 
           : currentAnswer.toString();
         
-        // Show wrong answer feedback without revealing the answer
-        document.getElementById('feedbackText').textContent = 'טעות';
-        feedback.className = 'feedback incorrect';
-        
-        // Show action buttons
-        document.getElementById('wrongAnswerActions').style.display = 'flex';
-        document.getElementById('revealedAnswer').style.display = 'none';
-        
         // Store correct answer for reveal function
         window.currentCorrectAnswer = correctAnswerStr;
         
         // Track wrong answer (always track, even on retry)
         trackQuestion(currentProblem, correctAnswerStr, userAnswerDisplay, 'wrong');
+        
+        // Show error as popup for ALL devices and hide input
+        // Hide input fields
+        document.getElementById('answer').style.display = 'none';
+        document.getElementById('fractionInput').style.display = 'none';
+        
+        // Show error popup with action buttons (right to left: reveal answer, try again)
+        Swal.fire({
+          title: 'טעות',
+          text: 'התשובה שגויה. מה תרצה לעשות?',
+          icon: 'error',
+          showCancelButton: false,
+          showDenyButton: true,
+          confirmButtonText: 'גלה תשובה',
+          denyButtonText: 'נסה שוב',
+          confirmButtonColor: '#f59e0b',
+          denyButtonColor: '#667eea',
+          reverseButtons: true, // Right to left: reveal answer (right), try again (left)
+          customClass: {
+            popup: 'rtl-popup'
+          }
+        }).then((result) => {
+          // Show input fields again
+          if (isFractionProblem) {
+            document.getElementById('fractionInput').style.display = 'block';
+          } else {
+            document.getElementById('answer').style.display = 'block';
+          }
+          
+          if (result.isConfirmed) {
+            // Reveal answer - show correct answer and continue button
+            const correctAnswerStr = window.currentCorrectAnswer || (isFractionProblem 
+              ? fractionToString(currentAnswer) 
+              : currentAnswer.toString());
+            
+            let answerDisplay = '';
+            if (isFractionProblem && currentAnswer && currentAnswer.denominator !== 1) {
+              answerDisplay = `התשובה הנכונה היא: ${fractionToHTML(currentAnswer)}`;
+            } else {
+              answerDisplay = `התשובה הנכונה היא: ${correctAnswerStr}`;
+            }
+            
+            // Show popup with answer and continue button
+            Swal.fire({
+              title: 'התשובה הנכונה',
+              html: `<div style="font-size: 20px; margin: 20px 0;">${answerDisplay}</div>`,
+              icon: 'info',
+              confirmButtonText: 'המשך',
+              confirmButtonColor: '#10b981',
+              customClass: {
+                popup: 'rtl-popup'
+              }
+            }).then(() => {
+              continueToNext();
+            });
+          } else if (result.isDenied) {
+            // Try again
+            retryQuestion();
+          }
+        });
       }
 
       updateStats();
@@ -2538,6 +2809,13 @@
       if (!lastProblemParams) {
         generateProblem();
         return;
+      }
+      
+      // Ensure input fields are visible
+      if (isFractionProblem) {
+        document.getElementById('fractionInput').style.display = 'block';
+      } else {
+        document.getElementById('answer').style.display = 'block';
       }
       
       // Clear feedback and hide buttons
@@ -2665,6 +2943,14 @@
       document.getElementById('feedback').className = 'feedback';
       document.getElementById('wrongAnswerActions').style.display = 'none';
       document.getElementById('revealedAnswer').style.display = 'none';
+      
+      // Ensure input fields are visible
+      if (isFractionProblem) {
+        document.getElementById('fractionInput').style.display = 'block';
+      } else {
+        document.getElementById('answer').style.display = 'block';
+      }
+      
       generateProblem();
     }
 
@@ -2679,6 +2965,16 @@
       score = Math.max(0, score - 5);
       updateStats();
       saveState();
+      
+      // Ensure input fields are visible before generating new problem
+      if (isFractionProblem) {
+        document.getElementById('fractionInput').style.display = 'block';
+        document.getElementById('answer').style.display = 'none';
+      } else {
+        document.getElementById('answer').style.display = 'block';
+        document.getElementById('fractionInput').style.display = 'none';
+      }
+      
       generateProblem();
     }
 
